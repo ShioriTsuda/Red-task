@@ -1,0 +1,88 @@
+import PySimpleGUI as sg
+
+# Window Layout
+layout = [
+    [sg.Text('Input a question(Is/Are/Do/Does)')],
+    [sg.InputText(key = '-input1-')],
+    [sg.Text('Choose yes or no')],
+    [sg.InputText(key = '-input2-')],
+    [sg.Button('Answer', key = '-ans_button-'), sg.Button('Exit')],
+    [sg.Text('Answer'), sg.InputText('', key = '-result-')]]
+
+def nlp(str):
+    if str[0:3] == 'Do ':   # case(Do you)
+        s, v = do() # Calling the do function and assigning
+
+    elif str[0:3] == 'Doe': # case(Does)
+        sub = str[5:6]   # Assign the first character of the second word to 'sub'
+        s, v = does(sub) # Calling the does function and assigning
+
+    elif str[0:3] == 'Are': # case(Are)
+        sub = str[4:5] # Assign the first character of the second word to 'sub'
+        s, v = beare(sub) # Calling the beare function and assigning
+
+    elif str[0:3] == 'Is ' : # case(Is)
+        sub = str[3:4] # Assign the first character of the second word to 'sub'
+        s, v = beis(sub) # Calling the beis function and assigning
+    return s, v
+
+
+def beare(sub): #case(Are)
+    if sub == 'y': #case(Are you)
+        s = 'I'
+        v = 'am'
+    elif sub == 't': #case(Are they)
+        s = 'they'
+        v = 'are'
+    return s, v
+
+def beis(sub): #case(Is)
+    v = 'is'
+
+    if sub == 'h': #case(Is he)
+        s = 'he'
+    elif sub == 's': #case(Is she)
+        s = 'she'
+    elif sub == 'i': #case(Is it)
+        s = 'it'
+    return s, v
+
+def do():  #case(Do you)
+    s = 'I'
+    v = 'do'
+    return s, v
+
+def does(sub): #case(Does)
+    v = 'does'
+
+    if sub == 'h': #case(Does he)
+        s = 'he'
+    elif sub == 's': #case(Does she)
+        s = 'she'
+    elif sub == 'i': #case(Does it)
+        s = 'it'
+    return s, v
+
+sg.theme('DarkTeal1')   # Theme color
+
+# Generate Window
+window = sg.Window('Questions and Answers', layout)
+
+# main
+while True:
+
+    event, values = window.read() # load
+
+    input1 = values['-input1-'] # Convert keys to be treated as variables
+    input2 = values['-input2-'] # Convert keys to be treated as variables
+    subject, verb = nlp(input1) # Call nlp function and assign to 'subject' and 'verb'
+
+    if event == sg.WIN_CLOSED or event == 'Exit': # if user closes window or clicks "Exit"
+        break
+    elif event == '-ans_button-': # if user clicks "Answer" button
+        if input2 == 'yes': # case(yes)
+            window['-result-'].update('Yes, ' + subject + ' ' + verb +  '.') # output
+        elif input2 == 'no': #case(no)
+            window['-result-'].update('No, ' + subject + ' ' + verb + ' not.') # output
+            
+window.close()
